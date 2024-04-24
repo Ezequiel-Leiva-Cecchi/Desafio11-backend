@@ -3,7 +3,7 @@ import { expect } from "chai";
 import supertest from "supertest";
 
 import ProductsRouter from "../routes/products.routes.js";
-import { productDAO } from "../dao/products/indexProducts.js";
+import { productDAO } from "../dao/product/indexProducts.js";
 
 const request = supertest(ProductsRouter);
 
@@ -28,6 +28,9 @@ describe('Testing Products Routes', () => {
         const productData = {
             title: 'Product Test',
             description: 'This is a test product',
+            category:'Samsung',
+            stock:10,
+            code:'AEQW12',
             price: 10.99
         };
 
