@@ -2,7 +2,10 @@ import productsModel from "../../models/porducts.model.js";
 
 export class productsMongoose {
     async getProducts() {
-        return await productsModel.find().lean({ virtuals: true });
+        console.log("Obteniendo lista de productos...");
+        const products = await productsModel.find().lean({ virtuals: true });
+        console.log("Lista de productos obtenida:", products);
+        return products;
     }
     async getPaginatedProducts(query, paginationOptions) {
         const products = await productsModel.paginate(
@@ -33,8 +36,16 @@ export class productsMongoose {
         return groupProducts;
     }
     async addProduct(productData) {
+        console.log("Guardando nuevo producto en la base de datos...");
         const newProduct = new productsModel(productData);
-        await newProduct.save();
+        try {
+            const savedProduct = await newProduct.save();
+            console.log("Producto guardado exitosamente:", savedProduct);
+            return savedProduct;
+        } catch (error) {
+            console.error("Error al guardar el producto:", error);
+            throw error;
+        }
     }
     async editProduct({ pid, updateData }) {
         return await productsModel.findOneAndUpdate({ _id: pid }, updateData);

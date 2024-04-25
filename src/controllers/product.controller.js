@@ -34,10 +34,10 @@ export const addProduct = async (req, res, next) => {
         if (absentProperty) {
             throw new Error(`Absent property ${absentProperty}`);
         }
-        const userId = req.user ? req.user._id : null;
-        if (!userId) {
-            throw new Error('User not authenticated');
-        }
+        // const userId = req.user ? req.user._id : null;
+        // if (!userId) {
+        //     throw new Error('User not authenticated');
+        // }
 
         res.json({ message: 'Product added successfully' });
     } catch (error) {

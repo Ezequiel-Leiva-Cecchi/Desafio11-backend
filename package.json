@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
-    "test": "mocha src/test/cart.test.js"
+    "dev": "nodemon src/app.js",   
+    "test": "mocha src/test/products.test.js"
   },
   "author": "",
   "license": "ISC",
