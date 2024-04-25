@@ -2,7 +2,6 @@ import productsModel from "../../models/porducts.model.js";
 
 export class productsMongoose {
     async getProducts() {
-        console.log("Obteniendo lista de productos...");
         const products = await productsModel.find().lean({ virtuals: true });
         console.log("Lista de productos obtenida:", products);
         return products;
@@ -36,14 +35,11 @@ export class productsMongoose {
         return groupProducts;
     }
     async addProduct(productData) {
-        console.log("Guardando nuevo producto en la base de datos...");
         const newProduct = new productsModel(productData);
         try {
             const savedProduct = await newProduct.save();
-            console.log("Producto guardado exitosamente:", savedProduct);
             return savedProduct;
         } catch (error) {
-            console.error("Error al guardar el producto:", error);
             throw error;
         }
     }
