@@ -1,6 +1,11 @@
 import * as productsServices from '../services/productsServices.js';
 import { validateAddProducts, validateEditProducts } from "../utils/validation.js"; 
 
+// Función para verificar si un usuario es propietario del producto
+const isProductOwner = async (productId, userId) => {
+    const product = await productsServices.getProductById(productId);
+    return product.owner === userId;
+};
 
 export const getProducts = async (req, res, next) => {
     try {
@@ -28,16 +33,19 @@ export const getProduct = async (req, res, next) => {
 };
 
 export const addProduct = async (req, res, next) => {
-    const { body } = req;
+    const { body, user } = req;
     try {
         const absentProperty = validateAddProducts(body);
         if (absentProperty) {
             throw new Error(`Absent property ${absentProperty}`);
         }
-        // const userId = req.user ? req.user._id : null;
-        // if (!userId) {
-        //     throw new Error('User not authenticated');
-        // }
+        
+        // Verificar si el usuario es premium para asignarlo como propietario del producto
+        const owner = user.isPremium ? user.email : 'admin';
+
+        const productData = { ...body, owner };
+
+        await productsServices.addProduct(productData);
 
         res.json({ message: 'Product added successfully' });
     } catch (error) {
@@ -47,12 +55,18 @@ export const addProduct = async (req, res, next) => {
 
 export const editProduct = async (req, res, next) => {
     try {
-        const { body, params } = req;
+        const { body, params, user } = req;
         const { productId } = params; 
         const validation = validateEditProducts(body);
         if (Object.keys(validation).length === 0) {
-            throw new Error('At least one of the following properties is required:name, price, stock, category, description, code');
+            throw new Error('At least one of the following properties is required: name, price, stock, category, description, code');
         }
+        
+        const isOwner = await isProductOwner(productId, user.email);
+        if (!isOwner) {
+            return res.status(403).json({ error: 'You are not authorized to edit this product' });
+        }
+
         await productsServices.editProduct(productId, validation);
         res.json({ message: 'Successfully edit product' });
     } catch (error) {
@@ -63,6 +77,13 @@ export const editProduct = async (req, res, next) => {
 export const deleteProduct = async (req, res, next) => {
     try {
         const { productId } = req.params; 
+        const { user } = req;
+
+        const isOwner = await isProductOwner(productId, user.email);
+        if (!isOwner) {
+            return res.status(403).json({ error: 'You are not authorized to delete this product' });
+        }
+
         await productsServices.deleteProduct(productId);
         res.json({ message: 'Successfully delete product' });
     } catch (error) {

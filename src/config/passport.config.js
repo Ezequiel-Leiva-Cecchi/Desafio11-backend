@@ -32,6 +32,8 @@ const initializePassport = () => {
                     password: hashedPassword,
                 });
 
+              
+
                 // Crear un carrito para el nuevo usuario registrado
                 const newCart = await cartDAO.createCart();
                 await usersDAO.updateUserCart(newUser._id, newCart._id);
@@ -43,33 +45,7 @@ const initializePassport = () => {
             }
         }
     ));
-    
-    passport.use('login', new LocalStrategy(
-        { usernameField: 'email' },
-        async (username, password, done) => {
-            try {
-                console.log("Attempting login for username:", username);
-                const user = await usersDAO.getUserByEmail({ email: username });
-                if (!user) {
-                    console.log('User doesn\'t exist');
-                    return done(null, false);
-                }
-                console.log('Password in database:', user.password);
-                console.log('Password provided:', password);
-                if (!isValidPassword(user, password)) { // Utiliza la función isValidPassword aquí
-                    return done(null, false);
-                }
-                // Crear un carrito para el usuario que ha iniciado sesión
-                const newCart = await cartDAO.createCart();
-                await usersDAO.updateUserCart(user._id, newCart._id);
-    
-                return done(null, user);
-            } catch (error) {
-                return done(error);
-            }
-        }
-    ));
-    
+
     // Estrategia para la autenticación con GitHub
     passport.use('github', new GithubStrategy(
         {

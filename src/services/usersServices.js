@@ -61,3 +61,11 @@ export const logout = async (req) => {
 export const loginWithGithub = async (userData) => {
     return userData;
 };
+export const upgradeUserToPremium = async (userId) => {
+    try {
+        const updatedUser = await usersDAO.upgradeToPremium(userId);
+        return updatedUser;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};

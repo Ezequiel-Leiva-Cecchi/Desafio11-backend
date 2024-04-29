@@ -23,6 +23,10 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    premium: {
+        type: Boolean,
+        default: false  
+    }
 });
 
 userSchema.virtual('id').get(function (){

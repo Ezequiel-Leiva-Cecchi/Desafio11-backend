@@ -49,4 +49,18 @@ export class productsMongoose {
     async deleteProduct(pid) {
         return await productsModel.findOneAndDelete({ _id: pid });
     }
+    async upgradeToPremium(userId) {
+        try {
+            const updatedUser = await usersModel.findByIdAndUpdate(userId, { isPremium: true }, { new: true });
+
+            if (!updatedUser) {
+                throw new Error('User not found');
+            }
+
+            console.log("User upgraded to premium successfully:", updatedUser);
+            return updatedUser;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }

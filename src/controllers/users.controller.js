@@ -68,3 +68,12 @@ export const loginWithGithub = (req, res, next) => {
         res.status(200).json({ msg: "User logged in with Github successfully" });
     })(req, res, next);
 };
+export const upgradeToPremium = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const updatedUser = await userService.upgradeUserToPremium(userId);
+        res.status(200).json({ message: 'User upgraded to premium successfully', user: updatedUser });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
